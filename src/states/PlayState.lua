@@ -52,6 +52,11 @@ function PlayState:init()
             gSounds['clock']:play()
         end
     end)
+
+    -- CS50: points representation vars
+    self.points = 0
+    self.pointsY = 108
+    self.pointsOpacity = 255
 end
 
 function PlayState:enter(params)
@@ -189,8 +194,24 @@ function PlayState:calculateMatches()
         -- add score for each match
         for k, match in pairs(matches) do
             self.score = self.score + #match * 50
+
+            --CS50: extends the timer by 1 second per tile in a match
+            self.timer = self.timer + #match
+            self.points = self.points + #match
         end
 
+        --CS50: wait 1 second, then move up and fade out points then reset the vars
+        Timer.after(1, function() 
+            Timer.tween(1, {
+                [self] = { pointsY = 80, pointsOpacity = 0},
+            })
+            :finish(function()
+                self.points = 0
+                self.pointsY = 108
+                self.pointsOpacity = 255
+            end)
+        end)
+            
         -- remove any tiles that matched from the board, making empty spaces
         self.board:removeMatches()
 
@@ -254,4 +275,11 @@ function PlayState:render()
     love.graphics.printf('Score: ' .. tostring(self.score), 20, 52, 182, 'center')
     love.graphics.printf('Goal : ' .. tostring(self.scoreGoal), 20, 80, 182, 'center')
     love.graphics.printf('Timer: ' .. tostring(self.timer), 20, 108, 182, 'center')
+
+    -- CS50: draw points gained in the match
+    if self.points > 0 then
+        love.graphics.setColor(99, 155, 255, self.pointsOpacity)
+        love.graphics.printf('+ ' .. tostring(self.points) .. ' s', 82, self.pointsY, 182, 'center')
+        love.graphics.setColor(99, 155, 255, 255)
+    end
 end

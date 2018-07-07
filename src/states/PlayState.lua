@@ -189,21 +189,25 @@ function PlayState:calculateMatches()
     
     if matches then
 
-        
+        --[[
         for k, match in pairs(matches) do
             for j, test in pairs(match) do
                 print("x: " .. test.gridX, "y: " .. test.gridY)
             end
         end
         print("__________________________")
-        
+        ]]
 
         gSounds['match']:stop()
         gSounds['match']:play()
 
         -- add score for each match
         for k, match in pairs(matches) do
-            self.score = self.score + #match * 50
+            --self.score = self.score + #match * 50
+            
+            for i, tile in pairs(match) do
+                self.score = self.score + 50 * tile.variety
+            end
 
             --CS50: extends the timer by 1 second per tile in a match
             self.timer = self.timer + #match

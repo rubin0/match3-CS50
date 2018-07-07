@@ -13,15 +13,15 @@
 
 Board = Class{}
 
-function Board:init(x, y)
+function Board:init(x, y, level)
     self.x = x
     self.y = y
     self.matches = {}
 
-    self:initializeTiles()
+    self:initializeTiles(level)
 end
 
-function Board:initializeTiles()
+function Board:initializeTiles(level)
     self.tiles = {}
 
     for tileY = 1, 8 do
@@ -82,12 +82,12 @@ function Board:calculateMatches()
                     table.insert(matches, match)
                 end
 
+                matchNum = 1
+                
                 -- don't need to check last two if they won't be in a match
                 if x >= 7 then
                     break
                 end
-
-                matchNum = 1
             end
         end
 

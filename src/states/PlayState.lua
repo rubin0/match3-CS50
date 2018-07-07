@@ -54,9 +54,9 @@ function PlayState:init()
     end)
 
     -- CS50: points representation vars
-    self.points = 0
-    self.pointsY = 108
-    self.pointsOpacity = 255
+    self.seconds = 0
+    self.secondsY = 108
+    self.secondsOpacity = 255
 end
 
 function PlayState:enter(params)
@@ -188,6 +188,16 @@ function PlayState:calculateMatches()
     local matches = self.board:calculateMatches()
     
     if matches then
+
+        
+        for k, match in pairs(matches) do
+            for j, test in pairs(match) do
+                print("x: " .. test.gridX, "y: " .. test.gridY)
+            end
+        end
+        print("__________________________")
+        
+
         gSounds['match']:stop()
         gSounds['match']:play()
 
@@ -197,18 +207,18 @@ function PlayState:calculateMatches()
 
             --CS50: extends the timer by 1 second per tile in a match
             self.timer = self.timer + #match
-            self.points = self.points + #match
+            self.seconds = self.seconds + #match
         end
 
         --CS50: wait 1 second, then move up and fade out points then reset the vars
         Timer.after(1, function() 
             Timer.tween(1, {
-                [self] = { pointsY = 80, pointsOpacity = 0},
+                [self] = { secondsY = 80, secondsOpacity = 0},
             })
             :finish(function()
-                self.points = 0
-                self.pointsY = 108
-                self.pointsOpacity = 255
+                self.seconds = 0
+                self.secondsY = 108
+                self.secondsOpacity = 255
             end)
         end)
             
@@ -277,9 +287,9 @@ function PlayState:render()
     love.graphics.printf('Timer: ' .. tostring(self.timer), 20, 108, 182, 'center')
 
     -- CS50: draw points gained in the match
-    if self.points > 0 then
-        love.graphics.setColor(99, 155, 255, self.pointsOpacity)
-        love.graphics.printf('+ ' .. tostring(self.points) .. ' s', 82, self.pointsY, 182, 'center')
+    if self.seconds > 0 then
+        love.graphics.setColor(99, 155, 255, self.secondsOpacity)
+        love.graphics.printf('+ ' .. tostring(self.seconds) .. ' s', 82, self.secondsY, 182, 'center')
         love.graphics.setColor(99, 155, 255, 255)
     end
 end

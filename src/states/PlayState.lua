@@ -142,6 +142,7 @@ function PlayState:update(dt)
                 gSounds['error']:play()
                 self.highlightedTile = nil
             else
+                
                 -- swap grid positions of tiles
                 local tempX = self.highlightedTile.gridX
                 local tempY = self.highlightedTile.gridY
@@ -165,8 +166,36 @@ function PlayState:update(dt)
                     [newTile] = {x = self.highlightedTile.x, y = self.highlightedTile.y}
                 })
                 -- once the swap is finished, we can tween falling blocks as needed
-                :finish(function()
-                    self:calculateMatches()
+                :finish( 
+                    function()
+                        local highlightedTile = self.highlightedTile
+                    
+                        if not self:calculateMatches() then
+                            gSounds['error']:play()
+                            self.highlightedTile = nil
+                            Timer.after(0.25, function() 
+                                -- swap grid positions of tiles
+                                local tempX = highlightedTile.gridX
+                                local tempY = highlightedTile.gridY
+    
+                                highlightedTile.gridX = newTile.gridX
+                                highlightedTile.gridY = newTile.gridY
+                                newTile.gridX = tempX
+                                newTile.gridY = tempY
+    
+                                -- swap tiles in the tiles table
+                                self.board.tiles[highlightedTile.gridY][highlightedTile.gridX] =
+                                highlightedTile
+    
+                                self.board.tiles[newTile.gridY][newTile.gridX] = newTile
+    
+                                -- tween coordinates between the two so they swap
+                                Timer.tween(0.1, {
+                                    [highlightedTile] = {x = newTile.x, y = newTile.y},
+                                    [newTile] = {x = highlightedTile.x, y = highlightedTile.y}
+                                })
+                            end)
+                    end
                 end)
             end
         end
@@ -244,9 +273,11 @@ function PlayState:calculateMatches()
                 self:calculateMatches()
             end)
         end)
+        return true
     -- if no matches, we can continue playing
     else
         self.canInput = true
+        return false
     end
 end
 

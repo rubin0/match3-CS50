@@ -71,6 +71,8 @@ function PlayState:enter(params)
 
     -- score we have to reach to get to the next level
     self.scoreGoal = self.level * 1.25 * 1000
+
+    self.board:testMatch()
 end
 
 function PlayState:update(dt)
@@ -142,7 +144,7 @@ function PlayState:update(dt)
                 gSounds['error']:play()
                 self.highlightedTile = nil
             else
-                
+                self.canInput = false
                 -- swap grid positions of tiles
                 local tempX = self.highlightedTile.gridX
                 local tempY = self.highlightedTile.gridY
@@ -166,10 +168,10 @@ function PlayState:update(dt)
                     [newTile] = {x = self.highlightedTile.x, y = self.highlightedTile.y}
                 })
                 -- once the swap is finished, we can tween falling blocks as needed
-                :finish( 
+                :finish(
                     function()
                         local highlightedTile = self.highlightedTile
-                    
+                        
                         if not self:calculateMatches() then
                             gSounds['error']:play()
                             self.highlightedTile = nil
@@ -194,8 +196,9 @@ function PlayState:update(dt)
                                     [highlightedTile] = {x = newTile.x, y = newTile.y},
                                     [newTile] = {x = highlightedTile.x, y = highlightedTile.y}
                                 })
-                            end)
+                        end)
                     end
+                    self.canInput = true
                 end)
             end
         end
@@ -276,7 +279,6 @@ function PlayState:calculateMatches()
         return true
     -- if no matches, we can continue playing
     else
-        self.canInput = true
         return false
     end
 end

@@ -72,7 +72,6 @@ function PlayState:enter(params)
     -- score we have to reach to get to the next level
     self.scoreGoal = self.level * 1.25 * 1000
 
-    self.board:testMatch()
 end
 
 function PlayState:update(dt)
@@ -198,6 +197,7 @@ function PlayState:update(dt)
                                 })
                         end)
                     end
+                    self.board:check()
                     self.canInput = true
                 end)
             end
@@ -220,15 +220,6 @@ function PlayState:calculateMatches()
     local matches = self.board:calculateMatches()
     
     if matches then
-
-        --[[
-        for k, match in pairs(matches) do
-            for j, test in pairs(match) do
-                print("x: " .. test.gridX, "y: " .. test.gridY)
-            end
-        end
-        print("__________________________")
-        ]]
 
         gSounds['match']:stop()
         gSounds['match']:play()

@@ -309,45 +309,75 @@ function Board:render()
     end
 end
 
-function Board:testMatch()
+function Board:findMatches()
     
-     
-        for x = 1, 8 do
-            for y = 1, 8 do
-                local x2 = x - 1
-                local y2 = y - 1
-                for x2 = x - 1, x + 1, 2 do
-                    
-                        
-                        
-                        
+    local matchTable = {}
 
-                    
+    for x = 1, 8 do
+        for y = 1, 8 do
+            local x2 = x
+            local y2 = y
+
+            for y2 = y - 1, y + 1, 2 do
+                if y2 < 1 or y2 > 8 then
+                    break
                 end
 
-                for y2 = y - 1, y + 1, 2 do
-                    if x2 < 1 or y2 < 1 or x2 > 8 or y2 > 8 then
-                        break
-                    end
+                local testBoard = Class.clone(self)
+                local tile = testBoard.tiles[y][x]
+                local newTile = testBoard.tiles[y2][x]
 
-                    local testBoard = Class.clone(self)
-                        local tile = testBoard.tiles[y][x]
-                        local newTile = testBoard.tiles[y2][x2]
+                newTile = testBoard.tiles[newTile.gridY][newTile.gridX]
 
-                        newTile = testBoard.tiles[newTile.gridY][newTile.gridX]
-                        
-                        tempTile = testBoard.tiles[tile.gridY][tile.gridX]
+                tempTile = testBoard.tiles[tile.gridY][tile.gridX]
 
-                        testBoard.tiles[tile.gridY][tile.gridX] = newTile
-                        testBoard.tiles[newTile.gridY][newTile.gridX] = tempTile
+                testBoard.tiles[tile.gridY][tile.gridX] = newTile
+                testBoard.tiles[newTile.gridY][newTile.gridX] = tempTile
 
-                        local matches = testBoard:calculateMatches()
-                        if type(matches) ~= 'table' then
-                            print(matches)
-                        else
-                            print(#matches, "x: " .. x .. " y: " .. y .. " | x2: " .. x2 .. " y2: " .. y2)
-                        end
+                local matches = testBoard:calculateMatches()
+
+                if type(matches) == 'table' then
+                    table.insert(matchTable, {x..","..y, x..","..y2})
+                end
+            end
+
+            y2 = y
+
+            for x2 = x - 1, x + 1, 2 do
+                if x2 < 1 or x2 > 8  then
+                    break
+                end
+
+                local testBoard = Class.clone(self)
+                local tile = testBoard.tiles[y][x]
+                local newTile = testBoard.tiles[y][x2]
+
+                newTile = testBoard.tiles[newTile.gridY][newTile.gridX]
+
+                tempTile = testBoard.tiles[tile.gridY][tile.gridX]
+
+                testBoard.tiles[tile.gridY][tile.gridX] = newTile
+                testBoard.tiles[newTile.gridY][newTile.gridX] = tempTile
+
+                if type(matches) == 'table' then
+                    table.insert(matchTable, {x..","..y, x2..","..y})
                 end
             end
         end
+    end
+
+    return matchTable
 end
+
+function Board:check()
+    local matches = self:findMatches()
+    print_r(matches)
+    --[[
+    
+    while #matches < 0 do
+        self.initializeTiles()
+        matches = self.findMatches()
+    end
+    ]]
+end
+

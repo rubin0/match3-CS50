@@ -40,7 +40,10 @@ function Tile:render(x, y)
     love.graphics.draw(gTextures['main'], gFrames['tiles'][self.color][self.variety],
         self.x + x, self.y + y)
 
-        if self.shiny then
-            love.graphics.rectangle("fill", self.x + x, self.y + y, 20, 20 )
-        end
+    if self.shiny then
+        love.graphics.rectangle("fill", self.x + x, self.y + y, 20, 20 )
+    end
+
+    love.graphics.setFont(gFonts['small'])
+    love.graphics.print(self.gridX .. "," .. self.gridY, self.x + x + 9, self.y + y + 9)
 end

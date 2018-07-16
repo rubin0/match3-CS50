@@ -36,36 +36,39 @@ function Tile:init(x, y, color, variety)
 end
 
 function Tile:render(x, y)
+    
+    
 
     -- draw shadow
-    --love.graphics.setColor(34, 32, 52, 255)
-    --love.graphics.draw(gTextures['main'], gFrames['tiles'][self.color][self.variety],
-    --    self.x + x + 2, self.y + y + 2)
-    
-    if self.shiny then
-        self.shinyTable.factor = 255
-
-        --[[
-        if not self.shinyTable.timer then
-            self.shinyTable.timer = Timer.tween(2, {
-                [self.shinyTable] = { factor = 125 }
-            }):finish(function()
-                Timer.tween(2, {
-                    [self.shinyTable] = { factor = 255 }
-                }):finish(function() 
-                    self.shinyTable.timer = nil
-                end)
-            end)
-        end
-        ]]
-    end
+    love.graphics.setColor(34, 32, 52, 255)
+    love.graphics.draw(gTextures['main'], gFrames['tiles'][self.color][self.variety],
+       self.x + x + 2, self.y + y + 2)
     
      -- draw tile itself
-     love.graphics.setColor(0, 0, 200, 255)
+     love.graphics.setColor(255, 255, 255, 255)
      love.graphics.draw(gTextures['main'], gFrames['tiles'][self.color][self.variety],
          self.x + x, self.y + y)
 
-    love.graphics.setBlendMode("alpha")
+         if self.shiny then
+            love.graphics.setColor(255, 255, 255, self.shinyTable.factor)
+            love.graphics.rectangle('fill', (self.gridX - 1) * 32 + (VIRTUAL_WIDTH - 270),
+                (self.gridY - 1) * 32 + 18, 30, 30, 4)
+           
+            if not self.shinyTable.timer then
+                                
+                self.shinyTable.timer = Timer.tween(0.5, {
+                    [self.shinyTable] = { factor = 0 }
+                }):finish(function()
+                    Timer.tween(0.5, {
+                        [self.shinyTable] = { factor = 120 }
+                    }):finish(function() 
+                        self.shinyTable.timer = nil
+                    end)
+                end)
+            end
+        
+        end
+
 
     if DEBUG then
         love.graphics.setFont(gFonts['small'])

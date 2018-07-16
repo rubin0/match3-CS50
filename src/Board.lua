@@ -62,10 +62,6 @@ function Board:calculateMatches()
 
         local colorToMatch = self.tiles[y][1].color
 
-        if self.tiles[y][1].shiny then
-            shinyMatch = true
-        end
-
         matchNum = 1
 
         -- every horizontal tile
@@ -73,9 +69,6 @@ function Board:calculateMatches()
             -- if this is the same color as the one we're trying to match...
             if self.tiles[y][x].color == colorToMatch then
                 matchNum = matchNum + 1
-                if self.tiles[y][x].shiny then
-                    shinyMatch = true
-                end
             else
                 -- set this as the new color we want to watch for
                 colorToMatch = self.tiles[y][x].color
@@ -83,6 +76,13 @@ function Board:calculateMatches()
                 -- if we have a match of 3 or more up to now, add it to our matches table
                 if matchNum >= 3 then
                     local match = {}
+
+                    for x2 = x - 1, x - matchNum, -1 do
+                        -- add each tile to the match that's in that match
+                        if self.tiles[y][x2].shiny then
+                            shinyMatch = true
+                        end
+                    end
 
                     -- CS50: if tile in match is shiny add whole row to match table
                     if shinyMatch then
@@ -113,6 +113,12 @@ function Board:calculateMatches()
         -- account for the last row ending with a match
         if matchNum >= 3 then
             local match = {}
+
+            for x = 8, 8 - matchNum + 1, -1 do
+                if self.tiles[y][x].shiny then
+                    shinyMatch = true
+                end
+            end
             
             -- CS50: if tile in match is shiny add whole row to match table
             if shinyMatch then
@@ -136,10 +142,6 @@ function Board:calculateMatches()
 
         local colorToMatch = self.tiles[1][x].color
 
-        if self.tiles[1][x].shiny then
-            shinyMatch = true
-        end
-
         matchNum = 1
 
         -- every vertical tile
@@ -147,14 +149,17 @@ function Board:calculateMatches()
             if self.tiles[y][x].color == colorToMatch then
                 matchNum = matchNum + 1
 
-                if self.tiles[y][x].shiny then
-                    shinyMatch = true
-                end
             else
                 colorToMatch = self.tiles[y][x].color
 
                 if matchNum >= 3 then
                     local match = {}
+
+                    for y2 = y - 1, y - matchNum, -1 do
+                        if self.tiles[y2][x].shiny then
+                            shinyMatch = true
+                        end
+                    end
 
                     -- CS50: if tile in match is shiny add whole column to match table
                     if shinyMatch then
@@ -182,6 +187,12 @@ function Board:calculateMatches()
         -- account for the last column ending with a match
         if matchNum >= 3 then
             local match = {}
+
+            for y = 8, 8 - matchNum, -1 do
+                if self.tiles[y][x].shiny then
+                    shinyMatch = true
+                end
+            end
             
             -- CS50: if tile in match is shiny add whole column to match table
             if shinyMatch then

@@ -79,6 +79,14 @@ function PlayState:update(dt)
         love.event.quit()
     end
 
+    if love.keyboard.wasPressed('d') then
+        if DEBUG == false then
+            DEBUG = true
+          else
+            DEBUG = false
+          end
+    end
+
     -- go back to start if time runs out
     if self.timer <= 0 then
         -- clear timers from prior PlayStates
